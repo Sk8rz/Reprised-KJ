@@ -1,11 +1,17 @@
 local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
 
 local _RJCT = "Rejected"
+local _PSS = "Valid"
 
 local _IE = identifyexecutor and identifyexecutor() or "Unknown Executor"
 
 if _G[_RJCT] then
     _NL:SendNotification("Warning", _IE .. " doesn't meet Requirements!", 10)
+    return
+end
+
+if _G[_PSS] then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Sk8rz/Reprised-KJ/refs/heads/main/Main/RKJ.lua"))()
     return
 end
 
@@ -30,6 +36,8 @@ if #_RF > 0 then
     _G[_RJCT] = true
     return
 end
+
+_G[_PSS] = true
 
 task.wait(0.2)
 _NL:SendNotification("Success", _IE .. " Supported!", 5)
