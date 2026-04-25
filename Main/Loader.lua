@@ -34,4 +34,4 @@ end
 task.wait(0.2)
 _NL:SendNotification("Success", _IE .. " Supported!", 5)
 
-https://raw.githubusercontent.com/Sk8rz/Reprised-KJ/refs/heads/main/Main/RKJ.lua?token=GHSAT0AAAAAAD3NQLXFHGJ6BG374MV73F3G2PMIQWQ
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Sk8rz/Reprised-KJ/refs/heads/main/Main/RKJ.lua"))()
