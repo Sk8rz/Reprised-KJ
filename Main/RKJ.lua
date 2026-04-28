@@ -22,10 +22,6 @@ local function LoadMainScript()
 
     _NL:SendNotification("Success", "RKJ Loaded!", 5)
 
-    if _DV then
-        _NL:SendNotification("Info", "Developer Mode", 9999999999)
-    end
-
     local _G1 = game:GetService("Players")
     local _G2 = game:GetService("StarterGui")
     local _G3 = game:GetService("RunService")
@@ -414,6 +410,9 @@ if not _G.ReprisedKJ_LoaderExecuted then
         if _G[_RKJ] then
             return
         end
+    else
+        local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
+        _NL:SendNotification("Info", "Developer Mode", 1000000000)
     end
 end
 
