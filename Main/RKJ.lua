@@ -33,8 +33,8 @@ local function LoadMainScript()
     local _V1 = 0.15
     local _V2 = 0.1
 
-    -- SoundGroup Volume Presets (Exact as you wanted)
-    local volumePresets = {
+    -- Volume Presets: [SoundGroup.Volume] = Desired Final Volume
+    local _M1VP = {
         [0.10] = 0.14,
         [0.20] = 0.28,
         [0.30] = 0.42,
@@ -47,13 +47,12 @@ local function LoadMainScript()
         [1.00] = 1.40,
     }
 
-    local targetSoundGroup = SoundService:WaitForChild("Sounds")
+    local _M1SG = SoundService:WaitForChild("Sounds")   -- The SoundGroup named "Sounds"
 
-    local function getDesiredFinalVolume()
-        local groupVol = targetSoundGroup.Volume
+    local function _M1GV()   -- Get desired final volume based on current group volume
+        local groupVol = _M1SG.Volume
         local rounded = math.round(groupVol * 100) / 100
-        
-        return volumePresets[rounded] or 0.70  -- fallback to 0.70 if no exact match
+        return _M1VP[rounded] or 0.70   -- fallback
     end
 
     local _T1 = {
@@ -87,21 +86,25 @@ local function LoadMainScript()
         return tonumber(t.Animation.AnimationId:match("%d+"))
     end
 
-    -- Simple sound player with SoundGroup preset
+    -- Fixed Sound Player: Properly routes to SoundGroup + applies preset
     local function _F3(audioId)
         if not audioId or not _C2 then return end
 
         local s = Instance.new("Sound")
         s:SetAttribute("KJScript", true)
         s.SoundId = "rbxassetid://" .. audioId
-        s.SoundGroup = targetSoundGroup
+        s.SoundGroup = _M1SG          -- Route to "Sounds" SoundGroup
         s.Volume = 1.0
         s.Parent = _C2
         s:Play()
 
-        -- Apply preset volume correction
-        local desiredFinal = getDesiredFinalVolume()
-        s.Volume = desiredFinal / math.max(targetSoundGroup.Volume, 0.01)
+        -- Adjust individual volume so final heard volume matches preset
+        local desiredFinal = _M1GV()
+        if _M1SG.Volume > 0 then
+            s.Volume = desiredFinal / _M1SG.Volume
+        else
+            s.Volume = 0
+        end
 
         s.Ended:Once(function()
             s:Destroy()
@@ -211,17 +214,14 @@ local function LoadMainScript()
             if i == a.d then
                 _H1 = true
                 
-                local ri
+                local ri = a.r
                 
                 if a.x and _C2 then
                     local cy = _C2.Orientation.Y
                     local dt = cy - _Y1
                     if dt > 180 then dt = dt - 360 end
                     if dt < -180 then dt = dt + 360 end
-                    
                     ri = (dt < 0) and a.l or a.q
-                else
-                    ri = a.r
                 end
                 
                 t:Stop(_V2)
@@ -292,7 +292,9 @@ local function LoadMainScript()
         _F10()
     end
 
+    -- (The rest of your script from _FA() onward stays exactly the same)
     local function _FA()
+        -- ... your existing _FA function (unchanged)
         local tb = _L1.PlayerGui:WaitForChild("TopbarPlus", 5)
         if not tb then return end
         tb = tb:WaitForChild("TopbarContainer", 5)
@@ -347,7 +349,7 @@ local function LoadMainScript()
 
     task.spawn(function()
         _FA()
-        
+        -- ... (rest of your task.spawn block with character switcher remains unchanged)
         local df = _L1.PlayerGui.TopbarPlus.TopbarContainer.UnnamedIcon.DropdownContainer.DropdownFrame
         
         local kf = df:WaitForChild("KJ")
