@@ -1,4 +1,4 @@
-local _DV = false
+local _DV = true
 
 local _RKJ = "RKJ"
 
@@ -405,7 +405,8 @@ if not _G.ReprisedKJ_LoaderExecuted then
         end)
         
         if not _PSS then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))():SendNotification("Error", "Loader is Currently Down!", 7)
+            local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
+            _NL:SendNotification("Error", "Loader is Currently Down!", 7)
             LoadMainScript()
             return
         end
