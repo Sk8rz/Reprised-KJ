@@ -1,4 +1,4 @@
-local _DV = false
+local _DV = true
 
 local _RKJ = "RKJ"
 
@@ -18,6 +18,10 @@ local function LoadMainScript()
         _NL:SendNotification("Error", "Private Servers Unsupported!", 7)
         _G[_RKJ] = nil
         return
+    end
+
+    if _DV then
+        _NL:SendNotification("Info", "Developer Mode", 1000000000)
     end
 
     _NL:SendNotification("Success", "RKJ Loaded!", 5)
@@ -401,14 +405,15 @@ if not _G.ReprisedKJ_LoaderExecuted then
         end)
         
         if not _PSS then
-            local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
-            _NL:SendNotification("Error", "Loader is Currently Down!", 7)
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))():SendNotification("Error", "Loader is Currently Down!", 7)
             LoadMainScript()
             return
         end
-    else
-        local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
-        _NL:SendNotification("Info", "Developer Mode", 1000000000)
-        LoadMainScript()
+        
+        if _G[_RKJ] then
+            return
+        end
     end
 end
+
+LoadMainScript()
