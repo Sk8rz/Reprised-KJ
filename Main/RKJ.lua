@@ -406,14 +406,9 @@ if not _G.ReprisedKJ_LoaderExecuted then
             LoadMainScript()
             return
         end
-        
-        if _G[_RKJ] then
-            return
-        end
     else
         local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
         _NL:SendNotification("Info", "Developer Mode", 1000000000)
+        LoadMainScript()
     end
 end
-
-LoadMainScript()
