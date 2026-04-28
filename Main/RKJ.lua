@@ -1,3 +1,5 @@
+local _DV = true
+
 local _RKJ = "RKJ"
 
 local function LoadMainScript()
@@ -20,12 +22,16 @@ local function LoadMainScript()
 
     _NL:SendNotification("Success", "RKJ Loaded!", 5)
 
+    if _DV then
+        _NL:SendNotification("Info", "Developer Mode", 9999999999)
+    end
+
     local _G1 = game:GetService("Players")
     local _G2 = game:GetService("StarterGui")
     local _G3 = game:GetService("RunService")
     local _G4 = game:GetService("UserInputService")
     local _G5 = game:GetService("ReplicatedStorage")
-    local SoundService = game:GetService("SoundService")
+    local _SS = game:GetService("SoundService")
 
     local _L1 = _G1.LocalPlayer
     local _R1 = _G5:WaitForChild("Replication")
@@ -33,32 +39,21 @@ local function LoadMainScript()
     local _V1 = 0.15
     local _V2 = 0.1
 
-    -- Volume Presets: [SoundGroup.Volume] = Desired Final Volume
     local _M1VP = {
-        [0.10] = 0.14,
-        [0.20] = 0.28,
-        [0.30] = 0.42,
-        [0.40] = 0.56,
-        [0.50] = 0.70,
-        [0.60] = 0.84,
-        [0.70] = 0.98,
-        [0.80] = 1.12,
-        [0.90] = 1.26,
-        [1.00] = 1.40,
+        [0.10] = 0.14, [0.20] = 0.28, [0.30] = 0.42, [0.40] = 0.56,
+        [0.50] = 0.70, [0.60] = 0.84, [0.70] = 0.98, [0.80] = 1.12,
+        [0.90] = 1.26, [1.00] = 1.40,
     }
 
-    local _M1SG = SoundService:WaitForChild("Sounds")   -- The SoundGroup named "Sounds"
+    local _M1SG = _SS:WaitForChild("Sounds")
 
-    local function _M1GV()   -- Get desired final volume based on current group volume
-        local groupVol = _M1SG.Volume
-        local rounded = math.round(groupVol * 100) / 100
-        return _M1VP[rounded] or 0.70   -- fallback
+    local function _M1GV()
+        local _GV = _M1SG.Volume
+        local _RND = math.round(_GV * 100) / 100
+        return _M1VP[_RND] or 0.70
     end
 
-    local _T1 = {
-        [3755636438] = true,
-        [3755636825] = true
-    }
+    local _T1 = {[3755636438] = true, [3755636825] = true}
 
     local _T2 = {
         {d = 10469493270, r = 17325510002, s = 1, n = 17325528680},
@@ -68,10 +63,8 @@ local function LoadMainScript()
         {d = 10503381238, x = true, l = 13379003796, q = 10503381238}
     }
 
-    local Resources = _G5:FindFirstChild("Resources")
-    local _T3 = {
-        phone = Resources and Resources:FindFirstChild("le phone")
-    }
+    local _RS = _G5:FindFirstChild("Resources")
+    local _T3 = {phone = _RS and _RS:FindFirstChild("le phone")}
 
     local _C1, _C2, _C3, _C4, _C5
     local _X1, _X2, _X3
@@ -86,26 +79,21 @@ local function LoadMainScript()
         return tonumber(t.Animation.AnimationId:match("%d+"))
     end
 
-    -- Fixed Sound Player: Properly routes to SoundGroup + applies preset
     local function _F3(audioId)
         if not audioId or not _C2 then return end
-
         local s = Instance.new("Sound")
         s:SetAttribute("KJScript", true)
         s.SoundId = "rbxassetid://" .. audioId
-        s.SoundGroup = _M1SG          -- Route to "Sounds" SoundGroup
+        s.SoundGroup = _M1SG
         s.Volume = 1.0
         s.Parent = _C2
         s:Play()
-
-        -- Adjust individual volume so final heard volume matches preset
         local desiredFinal = _M1GV()
         if _M1SG.Volume > 0 then
             s.Volume = desiredFinal / _M1SG.Volume
         else
             s.Volume = 0
         end
-
         s.Ended:Once(function()
             s:Destroy()
         end)
@@ -127,13 +115,10 @@ local function LoadMainScript()
         if not d or type(d) ~= "table" or d.Effect ~= "Notification" then 
             return false 
         end
-        
-        local currentChar = _L1:GetAttribute("Character")
-        
-        if currentChar == "KJ." then
+        local _CCH = _L1:GetAttribute("Character")
+        if _CCH == "KJ." then
             return d.KJ == true
         end
-        
         return true
     end
 
@@ -213,9 +198,7 @@ local function LoadMainScript()
         for _, a in ipairs(_T2) do
             if i == a.d then
                 _H1 = true
-                
                 local ri = a.r
-                
                 if a.x and _C2 then
                     local cy = _C2.Orientation.Y
                     local dt = cy - _Y1
@@ -223,14 +206,11 @@ local function LoadMainScript()
                     if dt < -180 then dt = dt + 360 end
                     ri = (dt < 0) and a.l or a.q
                 end
-                
                 t:Stop(_V2)
-                
                 if _C5 and _F2(_C5) ~= ri then
                     _C5:Stop(_V2)
                     _C5 = nil
                 end
-                
                 if not _C5 and _C4 then
                     local an = Instance.new("Animation")
                     an.AnimationId = "rbxassetid://" .. ri
@@ -238,12 +218,8 @@ local function LoadMainScript()
                     nt:Play(_V1)
                     if a.s then nt:AdjustSpeed(a.s) end
                     _C5 = nt
-                    
-                    if a.n then 
-                        _F3(a.n) 
-                    end
+                    if a.n then _F3(a.n) end
                 end
-                
                 _H1 = false
                 break
             end
@@ -292,9 +268,7 @@ local function LoadMainScript()
         _F10()
     end
 
-    -- (The rest of your script from _FA() onward stays exactly the same)
     local function _FA()
-        -- ... your existing _FA function (unchanged)
         local tb = _L1.PlayerGui:WaitForChild("TopbarPlus", 5)
         if not tb then return end
         tb = tb:WaitForChild("TopbarContainer", 5)
@@ -349,7 +323,6 @@ local function LoadMainScript()
 
     task.spawn(function()
         _FA()
-        -- ... (rest of your task.spawn block with character switcher remains unchanged)
         local df = _L1.PlayerGui.TopbarPlus.TopbarContainer.UnnamedIcon.DropdownContainer.DropdownFrame
         
         local kf = df:WaitForChild("KJ")
@@ -401,14 +374,12 @@ local function LoadMainScript()
         
         _L1:GetAttributeChangedSignal("Character"):Connect(function()
             local ca = _L1:GetAttribute("Character")
-            
             if ca == "KJ." then
                 if _Y2 ~= ca then
                     _F1("NOTIFICATION", "Character based on KJ's Final Ride & KJ Kills Day")
                     _Y2 = ca
                 end
             end
-            
             _F10()
         end)
         
@@ -428,18 +399,21 @@ local _LS = "https://raw.githubusercontent.com/Sk8rz/Reprised-KJ/main/Main/Loade
 if not _G.ReprisedKJ_LoaderExecuted then
     _G.ReprisedKJ_LoaderExecuted = true
     
-    local _PSS, err = pcall(function()
-        loadstring(game:HttpGet(_LS))()
-    end)
-    
-    if not _PSS then
-        warn("[RKJ] Failed to load official loader: " .. tostring(err))
-        LoadMainScript()
-        return
-    end
-    
-    if _G[_RKJ] then
-        return
+    if not _DV then
+        local _PSS = pcall(function()
+            loadstring(game:HttpGet(_LS))()
+        end)
+        
+        if not _PSS then
+            local _NL = loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMinisterq/Notification-Library/Main/Library.lua"))()
+            _NL:SendNotification("Error", "Loader is Currently Down!", 7)
+            LoadMainScript()
+            return
+        end
+        
+        if _G[_RKJ] then
+            return
+        end
     end
 end
 
