@@ -54,7 +54,6 @@ local function LoadMainScript()
         {d = 10469630950, r = 17325513870, s = 1, n = 17325528583},
         {d = 10469639222, r = 17325522388, s = 1, n = 17325528509},
         {d = 10469643643, r = 17325537719, s = 1, n = 17325528401},
-        -- Directional Uppercut (Left & Right based on target position)
         {d = 10503381238, x = true, l = 13379003796, q = 10503381238}
     }
 
@@ -184,44 +183,28 @@ local function LoadMainScript()
 
     local _H1 = false
 
-    -- Updated _F7 with improved left/right detection using dot product
     local function _F7(t)
         if _H1 then return end
         if _L1:GetAttribute("Character") ~= "KJ." then return end
-       
+        
         local i = _F2(t)
-       
+        
         for _, a in ipairs(_T2) do
             if i == a.d then
                 _H1 = true
                 local ri = a.r
-                
-                -- Improved directional check for uppercuts
                 if a.x and _C2 then
-                    local target = t.Track and t.Track.Parent and t.Track.Parent.Parent
-                    
-                    if target and target:IsA("Model") and target:FindFirstChild("HumanoidRootPart") then
-                        local myPos = _C2.Position
-                        local targetPos = target.HumanoidRootPart.Position
-                        
-                        -- Negative = target is on LEFT, Positive = target is on RIGHT
-                        local relative = (targetPos - myPos):Dot(_C2.CFrame.RightVector)
-                        
-                        if relative < 0 then
-                            ri = a.l  -- Left side uppercut
-                        else
-                            ri = a.q  -- Right side uppercut
-                        end
-                    end
+                    local cy = _C2.Orientation.Y
+                    local dt = cy - _Y1
+                    if dt > 180 then dt = dt - 360 end
+                    if dt < -180 then dt = dt + 360 end
+                    ri = (dt < 0) and a.l or a.q
                 end
-               
                 t:Stop(_V2)
-               
                 if _C5 and _F2(_C5) ~= ri then
                     _C5:Stop(_V2)
                     _C5 = nil
                 end
-               
                 if not _C5 and _C4 then
                     local an = Instance.new("Animation")
                     an.AnimationId = "rbxassetid://" .. ri
@@ -229,12 +212,8 @@ local function LoadMainScript()
                     nt:Play(_V1)
                     if a.s then nt:AdjustSpeed(a.s) end
                     _C5 = nt
-                   
-                    if a.n then
-                        _F3(a.n)
-                    end
+                    if a.n then _F3(a.n) end
                 end
-               
                 _H1 = false
                 break
             end
